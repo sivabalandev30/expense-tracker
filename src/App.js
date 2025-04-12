@@ -60,14 +60,19 @@ function App() {
             </div>
           </div>
         ) : activeTab === 'report' ? (
-          <div className="container mx-auto px-4">
+          <div className="container mx-auto px-6">
             <div className="grid md:grid-cols-2 sm:grid-cols-1 gap-6">
-              <div className="md:col-span-2 sm:col-span-1 text-center text-gray-600">
-                {filteredDateRange?.startDate && filteredDateRange?.endDate ? (
-                  <p>Filtered date range: {filteredDateRange.startDate} to {filteredDateRange.endDate}</p>
-                ) : (
-                  <p>filteredTransactions</p>
-                )}
+              <div className="md:col-span-2 sm:col-span-1">
+                <div className="bg-white shadow-md rounded-lg p-6 sm:p-4 text-center">
+                  <h2 className="text-lg font-semibold text-gray-700 mb-2">Report Summary</h2>
+                  {filteredDateRange?.startDate && filteredDateRange?.endDate ? (
+                    <p className="text-gray-600">
+                      Filtered date range: <span className="font-medium">{filteredDateRange.startDate}</span> to <span className="font-medium">{filteredDateRange.endDate}</span>
+                    </p>
+                  ) : (
+                    <p className="text-gray-500 italic">No date filter applied</p>
+                  )}
+                </div>
               </div>
             </div>
           </div>
