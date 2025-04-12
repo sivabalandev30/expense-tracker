@@ -14,16 +14,13 @@ const CategoryChart = () => {
   const { transactions, categories } = useGlobalState();
   const [chartType, setChartType] = useState('Pie');
   
-  // Date filter state
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 
-  // Ensure transactions and categories are defined before accessing them
   if (!transactions || !categories) {
-    return <p>Loading data...</p>;  // Or any appropriate loading state
+    return <p>Loading data...</p>;
   }
 
-  // Handle filtering of transactions based on date range
   const filterTransactionsByDate = (transactions, startDate, endDate) => {
     return transactions.filter(transaction => {
       const transactionDate = new Date(transaction.date);
@@ -33,21 +30,18 @@ const CategoryChart = () => {
     });
   };
 
-  // Prepare filtered transactions
   const filteredTransactions = filterTransactionsByDate(transactions, startDate, endDate);
 
-  // Prepare data by calculating total expenses and income per category
   const getCategoryData = (transactionType) => {
     return categories.map((category) => {
-      const total = (filteredTransactions || [])
+      const total = filteredTransactions
         .filter((t) => t.category === category && t.type === transactionType)
         .reduce((sum, t) => sum + (isNaN(parseFloat(t.amount)) ? 0 : parseFloat(t.amount)), 0);
 
       return { name: category, value: total };
-    }).filter(entry => entry.value > 0); // Only include categories with a positive total
+    }).filter(entry => entry.value > 0);
   };
 
-  // Prepare data for income and expense separately
   const expenseData = getCategoryData('expense');
   const incomeData = getCategoryData('income');
 
@@ -99,8 +93,8 @@ const CategoryChart = () => {
 
   return (
     <div className="w-full p-4 bg-white rounded-lg shadow-md">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">Income & Expenses by Category</h2>
+      <div className="flex flex-col md:flex-row justify-between items-center mb-4 gap-2">
+        <h2 className="text-lg font-semibold text-center md:text-left">Income & Expenses by Category</h2>
         <select
           value={chartType}
           onChange={(e) => setChartType(e.target.value)}
@@ -112,36 +106,40 @@ const CategoryChart = () => {
         </select>
       </div>
 
-      <div className="flex mb-4">
+      <div className="flex flex-col sm:flex-row gap-2 mb-4">
         <input
           type="date"
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
-          className="border border-gray-300 rounded px-2 py-1 mr-2"
+          className="border border-gray-300 rounded px-2 py-1 w-full sm:w-auto"
         />
         <input
           type="date"
           value={endDate}
           onChange={(e) => setEndDate(e.target.value)}
-          className="border border-gray-300 rounded px-2 py-1"
+          className="border border-gray-300 rounded px-2 py-1 w-full sm:w-auto"
         />
       </div>
 
       {expenseData.length === 0 && incomeData.length === 0 ? (
-        <p className="text-gray-500">No data available for the selected date range.</p>
+        <p className="text-gray-500 text-center">No data available for the selected date range.</p>
       ) : (
-        <div className="flex justify-between">
-          <div className="w-1/2 p-2">
-            <h3 className="text-center font-semibold">Income</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              {renderChart(incomeData)}
-            </ResponsiveContainer>
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="w-full md:w-1/2 p-2">
+            <h3 className="text-center font-semibold mb-2">Income</h3>
+            <div className="w-full h-[300px]">
+              <ResponsiveContainer width="100%" height="100%">
+                {renderChart(incomeData)}
+              </ResponsiveContainer>
+            </div>
           </div>
-          <div className="w-1/2 p-2">
-            <h3 className="text-center font-semibold">Expenses</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              {renderChart(expenseData)}
-            </ResponsiveContainer>
+          <div className="w-full md:w-1/2 p-2">
+            <h3 className="text-center font-semibold mb-2">Expenses</h3>
+            <div className="w-full h-[300px]">
+              <ResponsiveContainer width="100%" height="100%">
+                {renderChart(expenseData)}
+              </ResponsiveContainer>
+            </div>
           </div>
         </div>
       )}
